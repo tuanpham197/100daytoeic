@@ -43,14 +43,12 @@ const examDateDisplay = document.getElementById('exam-date-display');
 const motivationText = document.getElementById('motivation-text');
 
 const ringFill = document.getElementById('ring-fill');
-const timeWeeks = document.getElementById('time-weeks');
-const timeDays = document.getElementById('time-days');
 const timeHours = document.getElementById('time-hours');
 const timeMinutes = document.getElementById('time-minutes');
-const barWeeks = document.getElementById('bar-weeks');
-const barDays = document.getElementById('bar-days');
+const timeSeconds = document.getElementById('time-seconds');
 const barHours = document.getElementById('bar-hours');
 const barMinutes = document.getElementById('bar-minutes');
+const barSeconds = document.getElementById('bar-seconds');
 const progressBarInner = document.getElementById('progress-bar-inner');
 const progressPct = document.getElementById('progress-pct');
 const progressBarOuter = document.getElementById('progress-bar-outer');
@@ -171,7 +169,7 @@ function updateCountdown() {
   examMidnight.setHours(0, 0, 0, 0);
   const totalMs = examMidnight - now;
 
-  let weeks = 0, days = 0, hours = 0, minutes = 0;
+  let weeks = 0, days = 0, hours = 0, minutes = 0, seconds = 0;
 
   if (totalMs > 0) {
     const totalMinutesLeft = Math.floor(totalMs / 60000);
@@ -180,6 +178,7 @@ function updateCountdown() {
     days = daysLeft;
     hours = Math.floor((totalMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     minutes = Math.floor((totalMs % (1000 * 60 * 60)) / (1000 * 60));
+    seconds = Math.floor((totalMs % (1000 * 60)) / 1000);
   }
 
   // Days number
@@ -187,16 +186,14 @@ function updateCountdown() {
   flipValue(daysNumber, displayDays);
 
   // Time cards
-  flipValue(timeWeeks, weeks);
-  flipValue(timeDays, days > 0 ? days : 0);
   flipValue(timeHours, hours);
   flipValue(timeMinutes, minutes);
+  flipValue(timeSeconds, seconds);
 
   // Time bars
-  barWeeks.style.width = Math.min((weeks / 14) * 100, 100) + '%';
-  barDays.style.width = Math.min((days / TOTAL_DAYS) * 100, 100) + '%';
   barHours.style.width = Math.min((hours / 24) * 100, 100) + '%';
   barMinutes.style.width = Math.min((minutes / 60) * 100, 100) + '%';
+  barSeconds.style.width = Math.min((seconds / 60) * 100, 100) + '%';
 
   // Progress & ring
   const daysPassed = TOTAL_DAYS - Math.max(daysLeft, 0);
@@ -232,7 +229,7 @@ function showCountdown(date) {
   updateCountdown();
 
   if (intervalId) clearInterval(intervalId);
-  intervalId = setInterval(updateCountdown, 30000); // update every 30s
+  intervalId = setInterval(updateCountdown, 1000); // update every 1s
 }
 
 // ---- Show Date Setter ----
@@ -301,7 +298,10 @@ function init() {
   // Set min date to tomorrow
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
-  examDateInput.min = tomorrow.toISOString().split('T')[0];
+  const ty = tomorrow.getFullYear();
+  const tm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+  const td = String(tomorrow.getDate()).padStart(2, '0');
+  examDateInput.min = `${ty}-${tm}-${td}`;
 
   if (stored) {
     const [year, month, day] = stored.split('-').map(Number);
@@ -310,11 +310,17 @@ function init() {
     examDateInput.value = stored;
     showCountdown(date);
   } else {
-    // Pre-fill with 100 days from today
+    // Default to 100 days from today and start countdown automatically
     const future = new Date();
     future.setDate(future.getDate() + 100);
-    const iso = future.toISOString().split('T')[0];
-    examDateInput.value = iso;
+    future.setHours(0, 0, 0, 0);
+    const y = future.getFullYear();
+    const m = String(future.getMonth() + 1).padStart(2, '0');
+    const d = String(future.getDate()).padStart(2, '0');
+    const futureStr = `${y}-${m}-${d}`;
+    examDateInput.value = futureStr;
+    localStorage.setItem(STORAGE_KEY, futureStr);
+    showCountdown(future);
   }
 
   createParticles();
