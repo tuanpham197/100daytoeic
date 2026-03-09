@@ -10,24 +10,128 @@
 const TOTAL_DAYS = 100;
 const STORAGE_KEY = 'toeic_exam_date';
 const THEME_KEY = 'toeic_theme';
+const LANG_KEY = 'toeic_lang';
 
-const MOTIVATIONS = [
-  "Stay focused. Every day counts.",
-  "You're building something amazing, one day at a time.",
-  "Great scores are made in these quiet practice sessions.",
-  "Consistency beats cramming — keep going!",
-  "Each day of prep is confidence for exam day.",
-  "You've got this. The clock is your ally.",
-  "Hard work compounds. Trust the process.",
-  "Progress, not perfection. Show up today.",
-  "The exam is coming — so is your success.",
-  "Believe in the version of you who passes this test.",
-];
+let currentLang = 'en';
+
+const TRANSLATIONS = {
+  en: {
+    'badge-text': "Your TOEIC Journey Begins Now",
+    'hero-line': "100 Days to",
+    'hero-sub': "Excellence",
+    'hero-desc': "Every great score starts with a single day. Set your exam date and watch the clock tick toward your triumph.",
+    'set-date-label': "Set Your Exam Date",
+    'start-btn': "Start Countdown",
+    'days-left-label': "days left",
+    'exam-label': "Your TOEIC Exam Date",
+    'unit-weeks': "Weeks",
+    'unit-days': "Days",
+    'unit-hours': "Hours",
+    'unit-minutes': "Minutes",
+    'unit-seconds': "Seconds",
+    'prog-title': "Journey Progress",
+    'prog-start': "Day 1",
+    'prog-end': "Exam Day",
+    'ms-title': "Study Milestones",
+    'change-btn': "Change Exam Date",
+    'footer-text': "Made with",
+    'footer-text-2': "for your TOEIC success — 2026",
+
+    // Milestones
+    'ms1-label': "Day 25 reached",
+    'ms1-desc': "Vocabulary foundations solid",
+    'ms1-badge': "75 days left",
+    'ms2-label': "Halfway There!",
+    'ms2-desc': "Listening practice in full swing",
+    'ms2-badge': "50 days left",
+    'ms3-label': "Final Sprint!",
+    'ms3-desc': "Full mock tests every other day",
+    'ms3-badge': "25 days left",
+    'ms4-label': "Last Week!",
+    'ms4-desc': "Review strategies & get good sleep",
+    'ms4-badge': "7 days left",
+
+    // Dynamic Dates
+    'format-locale': 'en-US',
+  },
+  vi: {
+    'badge-text': "Hành trình TOEIC của bạn bắt đầu",
+    'hero-line': "100 Ngày đến",
+    'hero-sub': "Thành công",
+    'hero-desc': "Mọi điểm số tuyệt vời đều bắt đầu từ một ngày. Hãy đặt ngày thi và theo dõi đồng hồ đếm ngược.",
+    'set-date-label': "Đặt Ngày Thi Của Bạn",
+    'start-btn': "Bắt đầu Đếm Ngược",
+    'days-left-label': "ngày còn lại",
+    'exam-label': "Ngày Thi TOEIC Của Bạn",
+    'unit-weeks': "Tuần",
+    'unit-days': "Ngày",
+    'unit-hours': "Giờ",
+    'unit-minutes': "Phút",
+    'unit-seconds': "Giây",
+    'prog-title': "Tiến Độ Hành Trình",
+    'prog-start': "Ngày 1",
+    'prog-end': "Ngày Thi",
+    'ms-title': "Cột Mốc Học Tập",
+    'change-btn': "Thay Đổi Ngày Thi",
+    'footer-text': "Làm với",
+    'footer-text-2': "vì thành công TOEIC của bạn — 2026",
+
+    // Milestones
+    'ms1-label': "Đạt ngày 25",
+    'ms1-desc': "Nền tảng từ vựng vững chắc",
+    'ms1-badge': "Còn 75 ngày",
+    'ms2-label': "Được Nửa Đường!",
+    'ms2-desc': "Luyện nghe đang diễn ra mạnh mẽ",
+    'ms2-badge': "Còn 50 ngày",
+    'ms3-label': "Chạy Nước Rút!",
+    'ms3-desc': "Làm đề thi thử cách ngày",
+    'ms3-badge': "Còn 25 ngày",
+    'ms4-label': "Tuần Cuối Cùng!",
+    'ms4-desc': "Ôn lại chiến lược & ngủ đủ giấc",
+    'ms4-badge': "Còn 7 ngày",
+
+    // Dynamic Dates
+    'format-locale': 'vi-VN',
+  }
+};
+
+const MOTIVATIONS = {
+  en: [
+    "Stay focused. Every day counts.",
+    "You're building something amazing, one day at a time.",
+    "Great scores are made in these quiet practice sessions.",
+    "Consistency beats cramming — keep going!",
+    "Each day of prep is confidence for exam day.",
+    "You've got this. The clock is your ally.",
+    "Hard work compounds. Trust the process.",
+    "Progress, not perfection. Show up today.",
+    "The exam is coming — so is your success.",
+  ],
+  vi: [
+    "Hãy tập trung. Mỗi ngày đều quý giá.",
+    "Bạn đang xây dựng một điều tuyệt vời, từng ngày một.",
+    "Điểm số cao được tạo ra từ những buổi luyện tập yên tĩnh này.",
+    "Sự kiên trì đánh bại sự nhồi nhét — tiếp tục đi!",
+    "Mỗi ngày chuẩn bị là sự tự tin cho ngày thi.",
+    "Bạn làm được mà. Thời gian là đồng minh của bạn.",
+    "Sự chăm chỉ tích luỹ dần. Hãy tin vào quá trình.",
+    "Tiến bộ, không phải sự hoàn hảo. Hãy cố gắng ngay hôm nay.",
+    "Kỳ thi đang đến gần — và thành công của bạn cũng vậy.",
+    "Hãy tin vào phiên bản vượt qua kỳ thi này của chính bạn."
+  ]
+};
 
 const EXAM_LABELS = {
-  moreThan100: "Set your countdown and begin!",
-  exactly0: "🎉 Today is your exam day! Good luck!",
-  past: "Exam day has passed. Time for results!",
+  en: {
+    moreThan100: "Set your countdown and begin!",
+    exactly0: "🎉 Today is your exam day! Good luck!",
+    past: "Exam day has passed. Time for results!",
+  },
+  vi: {
+    moreThan100: "Đặt thời gian và bắt đầu!",
+    exactly0: "🎉 Hôm nay là ngày thi của bạn! Chúc may mắn!",
+    past: "Ngày thi đã qua. Đã đến lúc chờ kết quả!",
+  }
 };
 
 // ---- DOM Elements ----
@@ -37,6 +141,7 @@ const dateSection = document.getElementById('date-section');
 const countdownSection = document.getElementById('countdown-section');
 const changeDateBtn = document.getElementById('change-date-btn');
 const themeSwitch = document.getElementById('theme-switch');
+const langSwitch = document.getElementById('lang-switch');
 
 const daysNumber = document.getElementById('days-number');
 const examDateDisplay = document.getElementById('exam-date-display');
@@ -95,7 +200,8 @@ function getDaysRemaining(target) {
 }
 
 function formatExamDate(date) {
-  return date.toLocaleDateString('en-US', {
+  const locale = TRANSLATIONS[currentLang]['format-locale'];
+  return date.toLocaleDateString(locale, {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -123,13 +229,23 @@ function flipValue(el, newValue) {
 
 // ---- Motivation ----
 function getMotivation(daysLeft) {
-  if (daysLeft <= 0) return "You made it to exam day! 🎓 Best of luck!";
-  if (daysLeft <= 7) return "Final stretch! Review, rest, and believe in yourself.";
-  if (daysLeft <= 14) return "Two weeks left — sharpen those weak spots!";
-  if (daysLeft <= 25) return "Final sprint mode ON. Mock tests are your best friend.";
-  if (daysLeft <= 50) return "Halfway done. Your hard work is compounding.";
-  if (daysLeft <= 75) return "You're building solid foundations. Keep the pace!";
-  return MOTIVATIONS[Math.floor(Math.random() * MOTIVATIONS.length)];
+  const m = MOTIVATIONS[currentLang];
+  if (currentLang === 'vi') {
+    if (daysLeft <= 0) return "Bạn đã đến ngày thi! 🎓 Chúc may mắn!";
+    if (daysLeft <= 7) return "Chặng đường cuối! Ôn tập, nghỉ ngơi và tin vào bản thân.";
+    if (daysLeft <= 14) return "Còn hai tuần — hãy cải thiện những điểm yếu!";
+    if (daysLeft <= 25) return "Bật chế độ chạy nước rút. Đề thi thử là bạn tốt nhất.";
+    if (daysLeft <= 50) return "Đã đi được nửa chặng đường. Công sức của bạn đang tích tụ.";
+    if (daysLeft <= 75) return "Bạn đang xây dựng nền tảng vững chắc. Giữ vững nhịp độ!";
+  } else {
+    if (daysLeft <= 0) return "You made it to exam day! 🎓 Best of luck!";
+    if (daysLeft <= 7) return "Final stretch! Review, rest, and believe in yourself.";
+    if (daysLeft <= 14) return "Two weeks left — sharpen those weak spots!";
+    if (daysLeft <= 25) return "Final sprint mode ON. Mock tests are your best friend.";
+    if (daysLeft <= 50) return "Halfway done. Your hard work is compounding.";
+    if (daysLeft <= 75) return "You're building solid foundations. Keep the pace!";
+  }
+  return m[Math.floor(Math.random() * m.length)];
 }
 
 // ---- Milestones ----
@@ -288,8 +404,59 @@ function toggleTheme() {
 
 themeSwitch.addEventListener('click', toggleTheme);
 
+// ---- Language Switcher ----
+function updateDOMTexts() {
+  const elements = document.querySelectorAll('[data-i18n]');
+  const t = TRANSLATIONS[currentLang];
+  elements.forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key]) {
+      // Avoid replacing SVG/HTML in buttons if we just target a span
+      // For the button, we should wrap the text in a span in HTML,
+      // but if we are just setting innerText it will overwrite the SVG.
+      // Easiest is to target specific spans in the HTML.
+      el.textContent = t[key];
+    }
+  });
+
+  // Re-format existing date display
+  if (examDate) {
+    examDateDisplay.textContent = formatExamDate(examDate);
+  }
+
+  // Re-roll motivation
+  if (lastDays >= 0) {
+    motivationText.textContent = getMotivation(lastDays);
+  }
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem(LANG_KEY, lang);
+  updateDOMTexts();
+
+  // Update toggle button text
+  if (langSwitch) {
+    langSwitch.textContent = lang === 'en' ? 'EN' : 'VI';
+  }
+}
+
+if (langSwitch) {
+  langSwitch.addEventListener('click', () => {
+    setLang(currentLang === 'en' ? 'vi' : 'en');
+  });
+}
+
 // ---- Initialize ----
 function init() {
+  // Setup lang
+  const storedLang = localStorage.getItem(LANG_KEY);
+  if (storedLang && TRANSLATIONS[storedLang]) {
+    setLang(storedLang);
+  } else {
+    setLang('en');
+  }
+
   // Setup theme
   const storedTheme = localStorage.getItem(THEME_KEY);
   if (storedTheme) {
