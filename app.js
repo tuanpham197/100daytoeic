@@ -43,9 +43,13 @@ const examDateDisplay = document.getElementById('exam-date-display');
 const motivationText = document.getElementById('motivation-text');
 
 const ringFill = document.getElementById('ring-fill');
+const timeWeeks = document.getElementById('time-weeks');
+const timeDays = document.getElementById('time-days');
 const timeHours = document.getElementById('time-hours');
 const timeMinutes = document.getElementById('time-minutes');
 const timeSeconds = document.getElementById('time-seconds');
+const barWeeks = document.getElementById('bar-weeks');
+const barDays = document.getElementById('bar-days');
 const barHours = document.getElementById('bar-hours');
 const barMinutes = document.getElementById('bar-minutes');
 const barSeconds = document.getElementById('bar-seconds');
@@ -186,11 +190,15 @@ function updateCountdown() {
   flipValue(daysNumber, displayDays);
 
   // Time cards
+  flipValue(timeWeeks, weeks);
+  flipValue(timeDays, days > 0 ? days : 0);
   flipValue(timeHours, hours);
   flipValue(timeMinutes, minutes);
   flipValue(timeSeconds, seconds);
 
   // Time bars
+  barWeeks.style.width = Math.min((weeks / 14) * 100, 100) + '%';
+  barDays.style.width = Math.min((days / TOTAL_DAYS) * 100, 100) + '%';
   barHours.style.width = Math.min((hours / 24) * 100, 100) + '%';
   barMinutes.style.width = Math.min((minutes / 60) * 100, 100) + '%';
   barSeconds.style.width = Math.min((seconds / 60) * 100, 100) + '%';
