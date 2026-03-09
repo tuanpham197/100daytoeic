@@ -1032,8 +1032,14 @@ body {
 /* ----------- Responsive ----------- */
 @media (max-width: 700px) {
   .container {
-    padding: 32px 16px 60px;
+    padding: 80px 16px 60px;
     gap: 24px;
+  }
+
+  .top-controls {
+    top: 16px;
+    right: 16px;
+    gap: 10px;
   }
 
   .main-countdown {
