@@ -347,7 +347,7 @@ function showCountdown(date) {
   examDate = date;
   examDateDisplay.textContent = formatExamDate(date);
 
-  dateSection.hidden = true;
+  if (dateSection) dateSection.hidden = true;
   countdownSection.hidden = false;
 
   updateCountdown();
@@ -360,39 +360,45 @@ function showCountdown(date) {
 function showDateSetter() {
   examDate = null;
   if (intervalId) clearInterval(intervalId);
-  dateSection.hidden = false;
+  if (dateSection) dateSection.hidden = false;
   countdownSection.hidden = true;
   lastDays = -1;
 }
 
 // ---- Set Date Button ----
-setDateBtn.addEventListener('click', () => {
-  const value = examDateInput.value;
-  if (!value) {
-    examDateInput.focus();
-    examDateInput.style.borderColor = '#F97316';
-    setTimeout(() => (examDateInput.style.borderColor = ''), 1500);
-    return;
-  }
+if (setDateBtn) {
+  setDateBtn.addEventListener('click', () => {
+    const value = examDateInput.value;
+    if (!value) {
+      examDateInput.focus();
+      examDateInput.style.borderColor = '#F97316';
+      setTimeout(() => (examDateInput.style.borderColor = ''), 1500);
+      return;
+    }
 
-  // Parse as local date
-  const [year, month, day] = value.split('-').map(Number);
-  const date = new Date(year, month - 1, day);
-  date.setHours(0, 0, 0, 0);
+    // Parse as local date
+    const [year, month, day] = value.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    date.setHours(0, 0, 0, 0);
 
-  localStorage.setItem(STORAGE_KEY, value);
-  showCountdown(date);
-});
+    localStorage.setItem(STORAGE_KEY, value);
+    showCountdown(date);
+  });
+}
 
 // ---- Change Date ----
-changeDateBtn.addEventListener('click', () => {
-  showDateSetter();
-});
+if (changeDateBtn) {
+  changeDateBtn.addEventListener('click', () => {
+    showDateSetter();
+  });
+}
 
 // ---- Enter key on date input ----
-examDateInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') setDateBtn.click();
-});
+if (examDateInput) {
+  examDateInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') setDateBtn.click();
+  });
+}
 
 // ---- Theme Switcher ----
 function toggleTheme() {
@@ -476,13 +482,13 @@ function init() {
   const ty = tomorrow.getFullYear();
   const tm = String(tomorrow.getMonth() + 1).padStart(2, '0');
   const td = String(tomorrow.getDate()).padStart(2, '0');
-  examDateInput.min = `${ty}-${tm}-${td}`;
+  if (examDateInput) examDateInput.min = `${ty}-${tm}-${td}`;
 
   if (stored) {
     const [year, month, day] = stored.split('-').map(Number);
     const date = new Date(year, month - 1, day);
     date.setHours(0, 0, 0, 0);
-    examDateInput.value = stored;
+    if (examDateInput) examDateInput.value = stored;
     showCountdown(date);
   } else {
     // Default to 100 days from today and start countdown automatically
@@ -493,7 +499,7 @@ function init() {
     const m = String(future.getMonth() + 1).padStart(2, '0');
     const d = String(future.getDate()).padStart(2, '0');
     const futureStr = `${y}-${m}-${d}`;
-    examDateInput.value = futureStr;
+    if (examDateInput) examDateInput.value = futureStr;
     localStorage.setItem(STORAGE_KEY, futureStr);
     showCountdown(future);
   }
